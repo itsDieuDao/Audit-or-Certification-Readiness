@@ -2,147 +2,199 @@
 
  
 
-**Objective**: Understand how to map security controls to compliance frameworks (e.g., NIST CSF, ISO 27001, SOC 2) and test compliance in a home lab.
+**Objective**: Prepare for an **IT security audit or certification compliance review by simulating an audit readiness process in a home lab.**  
  <br/>
 
 
 <h2>🛠 Step 1: Choose a Compliance Framework</h2>
-You can start with NIST Cybersecurity Framework (CSF) since it's widely used and publicly available.<br/>   
+To prepare for an audit, choose a widely recognized framework: <br/>   
   <br/>  
   
-🔹 Alternative Options :  
-  - <b>ISO 27001 (if you want international standards)</b> 
-   - <b>SOC 2 (if you're interested in auditing for service providers)</b>
-   - <b>PCI-DSS (for payment security compliance)</b>
+  ✅ **ISO 27001** - International standard for information security  
+  ✅ **SOC 2 Type II**  - Focuses on security, availibility, confidentiality  
+  ✅ **NIST 800-53** - U.S. government security framework  
+  ✅ **CIS Controls v8** - General security best practices   
+  ✅ **PCI-DSS** - Compliance for handling credit card transactions  
+  
 
-👉 For this project, we'll use NIST CSF as our baseline framework. <br/>  
-📄 Download the NIST CSF document [HERE](https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf) <br/>  
+📌 For this project, **we'll simulate readiness for ISO 27001** - a common framework for information security management.    
+  
+📄 **ISO 27001 Controls List** - [HERE](https://sprinto.com/blog/iso-27001-controls/) <br/>  
 
   
-<h2>🛠 Step 2: Set Up Your Home Lab </h2>
+<h2>🛠 Step 2: Conduct a Gap Analysis </h2>  
+
+ 📌 **Compare your home lab security setup against ISO 27001 controls.**  
    
-<h3>🔹 Install a Windows Server & Linux VM </h3>  
-We'll map compliance requirements to actual security settings in a controlled environment.<br/>   
+   1. **Review Current Security Policies** - Do you have security policies in place?
+   2. **Check Access Control Measures** - Are there unnecessary admin accounts?
+   3. **Verify Logging & Monitoring** - Are security logs stored and reviewed?
+   4. **Assess Data Protection Measures** - Is sensitive data encrypted?
+   5. **Incident Response Readiness** - Do you have an incident response plan?
+          
+<h2>🔹 Step 2.1: Conduct an Internal Audit </h2>  
+Run these tests to assess security compliance in your home lab: <br/>   
   <br/>  
 
-   🔧 Tools & Setup:
-   - <b>Windows Server 2022 (or 2019) VM</b> - For Group Policy, logging, and access control </b>
-   - <b>Ubuntu/Debian VM</b> - For security configuration and compliance scanning </b>
-   - <b>pfSense VM (Optional)<b/> - If you want to add firewall policies
- 
-📌 Install Virtual Machines (VMs)
-1. Download and install VMware Worrkstation / VirtualBox
-2. Set up Windows Server 2022 and Ubuntu 22.04 VMs
-3. Configure a domain controller (Active Directory) on Windows Server <br/>
-
-
-<h2>🛠 Step 3: Map NIST CSF Controls to Your Lab Environment</h2>
-NIST CSF has five core functions:
-  
-1. Identify 🏷️ – Asset management, risk assessment
-2. Protect 🔒 – Access control, endpoint security
-3. Detect 👀 – Logging, SIEM, monitoring
-4. Respond 🚨 – Incident response plans
-5. Recover 🔄 – Backup, disaster recovery
-  
-🔹 Example Mapping:  
-| NIST Function | Control Example | Implementation in Lab |
-| ------------- | --------------- | --------------------- |
-| Identify      | Asset Inventory | List devices on the network using `nmap` or `PowerShell` `Get-ADComputer` |
-| Protect       | Access Control  | Set up Active Directory user roles & GPO for password polices | 
-| Detect        | Security Logging | Install **Splunk** or **Wazuh** to collect logs from Windows/Linux |
-| Respond       | Incident Response | Simulate a **failed login attack** and analyze logs |
-| Recover       | Backup & Restore | Set up **Windows Backup & Linux snapshots** |  
-
-✅ Goal: Implement at least one security control for each NIST function in your home lab.  
-
-<h2>🛠 Step 4: Implement Compliance Controls <br/>  
+   🖥 Windows Security Audit  
    
-🔹 Windows Server Hardening (Protect & Detect) </h2>  
-  
-  🔧 Tasks:  
-  1. Enable Password Policies
-      - Open **Group Policy Editor (gpedit.msc)**
-      - Navigate to `Computer Configuration > Windows Settings > Security Settings > Account Policies > Password Policy`
-      - Set **Minimum Password Length** = **12**
-      - Enable **Account Lockout Policy** (3 failed attempts)
-  2. **Enable Windows Logging (SIEM Integration)**
-      - Open **Local Security Policy (secpol.msc)**
-      - Go to `Audit Policy > Audit Logon Events` → Enable **Success & Failure**
-      - Install **Splunk** or **Wazuh** to collect logs
+  📌 **Check If Security Policies Are Enforced**  
 
-  
- <h2>🔹 Linux Hardening (Protect & Detect)</h2>  
-  
-  🔧 Tasks:  
-  1. **Run a Compliance Scan (NIST, CIS Benchmarks)**
-  
-         sudo apt install lynis -y
-         sudo lynis audit system  
-  - This will generate a **security report** based on NIST controls.
-  
-  2. **Set Up Basic Firewall Rules (UFW)**
+       gpresult /h C:\AuditReport.html  
 
-         sudo ufw enable
-         sudo ufw allow OpenSSH
-         sudo ufw allow 443/tcp
-         sudo ufw status verbose
-  - This ensures only secure traffic is allowed.  
+  📌 **Verify System Updates Are Installed**  
 
-<h2>🛠 Step 5: Compliance Validation & Reporting  <br/>  
+       Get-WindowsUpdateLog  
+
+  📌 **Check User Accounts & Permissions**  
+
+       Get-LocalUser | Select Name, Enabled  
+
+  ✅ **Identify disabled/inactive accounts that should be removed.**  
+
+
+ <h2>🐧 **Linux Security Audit** </h2>     
+  
+📌 **Check for Unauthorized Users**  
+
+      cat /etc/passwd | awk -F: '$3 >= 1000 {print $1}'  
+
+📌 **Verify SSH Secure Configuration**  
+
+      sudo cat /etc/ssh/sshd_config | grep -E "PermitRootLogin|PasswordAuthentication"  
+      
+  
+📌 **Scan for System Vulnerablities**  
+
+      sudo lynis audit system  
+
+✅ **Lynis provides a compliance score & remediation recommendations.**  
+
+
+    
+
+
+<h2>🛠 Step 3: Create a Compliance Readiness Plan </h2>  
+  
+Now that we've assessed gaps, create an **action plan** to meet **ISO 27001** requirements.  
+</br>  
+
+      
+  🔹 Compliance Readiness Plan    
+| **ISO 27001 Requirement** | **Current Status** | **Action Required** | **Owner** | **Due Date** | 
+| ------------------------- | ------------------ | ------------------- | --------- | ------------ | 
+| Security Policies | Not documented | Create & implement policies | IT Team | 1 Week | 
+| Access Control | Extra admin accounts found | Remove unneccessary accounts | Security Team | ASAP | 
+| Logging & Monitoring | Logs not reviewed | Set up log monitoring with SIEM | IT security | 2 Weeks | 
+| Data Encryption | No encryption for sensitive data | Implement disk & data encryption | Compliance Team | 2 Weeks | 
+| Incident Response Plan | Not defined | Develop and document an IR plan | IT Security | 1 Week |  
+
+✅ **This table helps track compliance progress!**  
+
+
+    
+<h2>🛠 Step 4: Implement Compliance Fixes <br/>  
+   
+🔹 Fix Security Gaps to Pass an Audit </h2>  
+  
+  🖥 **Windows Compliance Fixes**   
+
+  📌 **Enable BitLocker** for **Data Encryption**  
+
+        Enable-BitLocker -MountPoint "C:" -EncryptionMethod Aes256 -UsedSpaceOnly  
+
+  ✅ **Ensures sensitive data is encrypted.**  
+
+  📌 **Restrict Admin Accounts **
+  
+        Remove-LocalUser -Name "OldAdmin"  
+
+  ✅ **Reduce Attack Surface**  
+
+  📌 **Enable Windows Event Logging**  
+
+        auditpol /get /category:*  
+        
+  ✅ **Ensures security incidents are logged.**  
+  </br>  
+
+        
+  <h2>🐧 Linux Compliance Fixes </h2>  
+  
+  📌 **Enable Disk Encryption with LUKS**  
+
+         sudo cryptsetup luksFormat /dev/sdb  
+         
+✅ **Encrypts sensitive data.**  
+  
+  📌 **Implement SSH Key-Based Authentication**
+
+        sudo nano /etc/ssh/sshd_config
+        # Set:
+        PasswordAuthentication no
+        PermitRootLogin no  
+
+
+         sudo systemctl restart ssh  
+         
+ ✅ **Prevents brute-force attacks.**  
+   
+ 📌 **Enable Automatic Security Updates**  
+
+        sudo apt install unattended-upgrades
+        sudo dpkg-reconfigure unattended-upgrades  
+  
+  ✅ **Ensures critical patches are always applied**  
+  </br>  
+
+    
+<h2>🛠 Step 5: Conduct a Mock Audit & Review Findings </h2>    
      
-🔹 Generate a Compliance Report  </h2>  
+<h3>🔹 Step 5.1: Perform a Compliance Check  </h3>  
+
+ Run security scans again to confirm fixes.     
+
+  ✅ **Windows Compliance Check**  
+
+        Get-BitLockerVolume
+        Get-EventLog -LogName Security -Newest 10  
+          
+  ✅ **Linux Compliance Check**       
+
+       sudo lynis audit system  
   
- 1. **Windows: Check compliance settings**  
+  ✅ **Check User Access Logs**  
+
+      sudo lastlog  
+
+  📌 **Create a final audit report summarizing compliance progress.**  
+ </br> 
   
-        Get-GPOReport -All -ReportType HTML -Path C:\GPO_Report.html
-    - This exports a **Group Policy** compliance report.
+<h2> 📄 Sample Audit Readiness Report </h2>  
+
+**ISO 27001 Readiness Assessment Report**  
+**Date:** \[2/16/2025]  
+**Scope:** Home Lab Security Compliance   
+
+<h3> 🔹 Summary of Compliance Status </h3>  
   
-2. *Linux: Review Lynis Report**
-
-       cat /var/log/lynis-report.dat
-    - Look for **security misconfigurations**
-
-3. **Analyze Security Logs with Splunk/Wazuh**
-    - If you set up **Splunk**, create a **dashboard** to track compliance events.
-
-<h2>🛠 Step 6: Write a Compliance Summary Report</h2>  
-
-🎯 Your Deliverable: A **1-Page Compliance Report** summarizing:  
-
-✅ Controls Implemented  
-✅ Findings from Compliance Tools  
-✅ Areas for Improvement  
-✅ Next Steps  
-
-<h3> 📄 Example Summary: </h3>  
-
-**Security Compliance Report - NIST CSF Implementation in Home Lab**  
-**Date:** \[Your Date]  
-**Compliance Framework:** NIST Cybersecurity Framework (CSF) 
-
-<h3> 🔹 Summary of Controls Implemented </h3>  
-
-✅ Access Control (Windows & Linux GPOs) → PROTECT  
-✅ Security Logging Enabled (Splunk/Wazuh) → DETECT  
-✅ Firewall Rules (UFW, pfSense) → PROTECT  
-✅ Audit Logs Reviewed → DETECT & RESPOND  
-
-<h3> 🔹 Findings </h3>  
-
-📌 **Windows Server Compliance Scan**: Passed 8/10 controls (Weak password policy detected)  
-📌 **Linux Security Audit (Lynis)**: Hardening score 85/100 (Need SSH restriction improvement)  
-📌 **Splunk Logs**: Detected 3 failed login attempts (Possible brute force)  
+| Control Area | Audit Result | Status | 
+| ------------ | ------------ | ------ | 
+| Security Policies | Policies implemented | ✅ Passed | 
+| Access Control | Extra admin accounts removed | ✅ Passed | 
+| Logging & Monitoring | Logs centralized in SIEM | ✅ Passed | 
+| Data Encryption | BitLocker & LUKS enabled | ✅ Passed | 
+| Incident Response Plan | IR plan documented & tested | ✅ Passed |  
   
-<h3> 🔹 Areas for Improvement </h3>  
+<h3> 🔹 Remaining Action Items </h3>  
 
-  - Enforce **MFA** for **Windows Login**  
-  - Implement **automatic remidiation scripts** for failed login detection
+📌 **Conduct periodic compliance reviews**    
+📌 **Automate audit checks with Powershell or Bash scripts**    
+📌 **Test Incident Response scenarios quarterly**  
+  
+✅ **Final Recommendation: Ready for an External Audit!**  
 
-<h3> 🔹 Next Steps </h3>  
-
-   1. Set up **Automated Compliance Monitoring** (e.g., Wazuh SIEM rules)
-   2. Perform **Continuous Auditing** (Scheduled CIS Benchmark scans)
+  
 
   
 
